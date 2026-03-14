@@ -10,15 +10,15 @@
         body { margin: 0; padding: 20px; font-family: 'Montserrat', sans-serif; background: url('yearbook.jpg') no-repeat center center fixed; background-size: cover; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
         .card { background: rgba(255, 255, 255, 0.95); max-width: 500px; width: 100%; border-radius: 50px; padding: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.2); text-align: center; }
         h1 { font-family: 'Bodoni Moda', serif; font-style: italic; font-size: 2.8rem; margin-bottom: 10px; color: #1a1a1a; }
-        .photo-container { display: flex; justify-content: center; margin: 25px 0; }
-        .photo-container img { width: 200px; height: 250px; object-fit: cover; border-radius: 25px; border: 5px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #eee; font-family: 'Montserrat'; box-sizing: border-box; font-size: 0.9rem; }
+        .photo-container img, .shirt-preview img { width: 100%; max-width: 200px; border-radius: 25px; border: 5px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin: 15px 0; }
+        input, select { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #eee; font-family: 'Montserrat'; box-sizing: border-box; font-size: 0.9rem; }
         .reminder-container { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0; cursor: pointer; }
         .reminder-container input[type="checkbox"] { width: 20px; height: 20px; margin: 0; cursor: pointer; }
         .reminder-text { font-size: 0.75rem; color: #888; text-transform: lowercase; }
+        .shirt-section { display: none; background: #fdfdfd; padding: 20px; border-radius: 25px; border: 1px dashed #ccc; margin-top: 10px; }
         .btn-main { background: #000; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 50px; font-weight: 700; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
-        .btn-main:hover { background: #333; transform: scale(1.02); }
-        .btn-decline { background: none; color: #aaa; text-decoration: underline; font-size: 0.8rem; border: none; cursor: pointer; margin-top: 15px; }
+        .btn-secondary { background: #fff; color: #000; border: 2px solid #000; padding: 15px; width: 100%; border-radius: 50px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .zelle-box { background: #6d1ed1; color: white; padding: 20px; border-radius: 25px; margin-top: 20px; font-size: 0.9rem; font-weight: 700; }
         #success-view, #admin-panel { display: none; }
         .rsvp-item { border-bottom: 1px solid #f0f0f0; padding: 12px 0; font-size: 0.85rem; text-align: left; }
     </style>
@@ -28,68 +28,102 @@
 <div class="card">
     <div id="rsvp-view">
         <h1>Class of 2026!</h1>
-        <p style="font-size: 0.9rem; color: #666;">I’m soon-to-be a Clark Atlanta University Graduate! 🎓 Bachelor of Science in Computer Science | Class of 2026 | Please join me on Monday, May 18th, at 10:00 AM to celebrate this milestone.</p>
-        
-        <div class="photo-container">
-            <img src="grad.jpg" alt="Maliyah Graduation Photo">
-        </div>
+        <p style="font-size: 0.9rem; color: #666;">I’m soon-to-be a Clark Atlanta University Graduate! 🎓<br>Bachelor of Science in Computer Science | Class of 2026 <br>Please join me on Monday, May 18th, at 10:00 am to celebrate this milestone.</p>        
+        <div class="photo-container"><img src="grad.jpg" alt="Maliyah"></div>
 
         <p style="font-size: 0.7rem; color: #888; font-style: italic; margin-bottom: 20px;">*No tickets necessary, entry is first come first serve*</p>
 
         <input type="text" id="name" placeholder="YOUR FULL NAME">
         <input type="text" id="phone" placeholder="PHONE NUMBER">
         
+        <p style="font-size: 0.75rem; font-weight: 700; margin-top: 10px;">How many people will be attending, including you?</p>
+        <input type="number" id="guests" min="1" value="1">
+
+        <p style="font-size: 0.75rem; font-weight: 700; margin-top: 10px;">WANT A GRADUATION SHIRT? ($15 EACH)<br><span style="color: #d32f2f; font-size: 0.65rem;">(Please RSVP before April 15th if ordering a shirt)</span></p>        <div class="shirt-preview"><img src="shirt.jpg" alt="Shirt Design"></div>
+        
+        <select id="wantsShirt" onchange="toggleShirtSection()">
+            <option value="no">No thank you</option>
+            <option value="yes">Yes, I want one!</option>
+        </select>
+
+        <div id="shirt-section" class="shirt-section">
+            <input type="text" id="shirtSizes" placeholder="Sizes (ex: womens small, mens xl)">
+            <p style="font-size: 0.7rem; color: #888;">Separate multiple sizes with a comma!</p>
+        </div>
+
         <label class="reminder-container">
             <input type="checkbox" id="reminder"> 
             <span class="reminder-text">text me a reminder a week before! 📱</span>
         </label>
 
         <button class="btn-main" onclick="handleRSVP('Coming')">I'll be there!</button>
-        <button class="btn-decline" onclick="handleRSVP('Declined')">No I can't make it</button>
+        <button onclick="handleRSVP('Declined')" style="background:none; border:none; text-decoration:underline; font-size:0.7rem; cursor:pointer; margin-top:15px; color:#aaa;">No I can't make it</button>
         
         <p onclick="adminLogin()" style="font-size: 0.6rem; color: #f5f5f5; margin-top: 30px; cursor: pointer;">Admin</p>
     </div>
 
     <div id="success-view">
-        <h1 id="success-header" style="font-size: 2.2rem;">See you there! 🎓</h1>
+        <h1 id="success-header" style="font-size: 2.2rem;">See you soon! 🎓</h1>
+        
+        <div id="payment-area" style="display:none;">
+            <div class="zelle-box">
+                SHIRT ORDER CONFIRMED! 👕<br>
+                Please Zelle your total ($10/shirt) to:<br>
+                <span style="font-size: 1.2rem;">619-841-9201</span><br>
+                (Include your name in the memo!)
+            </div>
+        </div>
+
         <div id="address-info">
             <p style="font-weight: 700; color: #000; margin-top: 20px;">Location Details:</p>
             <p style="font-size: 1rem; line-height: 1.5;">
                 Georgia World Congress Center<br>
                 285 Andrew Young International Blvd NW<br>
-                Atlanta, GA 30313,
-                Building A
+                Atlanta, GA 30313, Building A
             </p>
-            <p style="font-size: 0.8rem; color: #888; font-style: italic; margin-top: 10px;">Ceremony begins promptly at 10:00 AM</p>
+            <button class="btn-secondary" onclick="downloadCalendarInvite()">🗓 Add to Calendar</button>
         </div>
-        <button class="btn-main" style="margin-top: 30px;" onclick="location.reload()">Back</button>
+        <button class="btn-main" style="margin-top: 20px;" onclick="location.reload()">Back</button>
     </div>
 
     <div id="admin-panel">
-        <h2 style="font-family: 'Bodoni Moda'; font-size: 2rem;">Graduation Guest List</h2>
-        <div id="guest-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">Loading...</div>
+        <h2 style="font-family: 'Bodoni Moda'; font-size: 2rem;">Guest List & Orders</h2>
+        <div id="guest-list" style="max-height: 400px; overflow-y: auto;"></div>
         <button class="btn-main" onclick="location.reload()">Logout</button>
     </div>
 </div>
 
 <script>
-    // Copy the full key from your screenshot starting with "sb_publishable..."
     const SUPABASE_URL = 'https://nswknsruyctbgmapoyhn.supabase.co'; 
     const SUPABASE_KEY = 'sb_publishable_F_YW6HOVpmbxjZy2PBnLQg_apPEPBlI';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function toggleShirtSection() {
+        document.getElementById('shirt-section').style.display = 
+            document.getElementById('wantsShirt').value === 'yes' ? 'block' : 'none';
+    }
 
     async function handleRSVP(status) {
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value;
         const reminder = document.getElementById('reminder').checked;
+        const guests = document.getElementById('guests').value;
+        const wantsShirt = document.getElementById('wantsShirt').value;
+        const sizes = document.getElementById('shirtSizes').value;
 
         if (!name) return alert("Please enter your name!");
+
+        const shirtCount = (wantsShirt === 'yes' && sizes) ? sizes.split(',').length : 0;
+        const totalCost = shirtCount * 10;
 
         const { error } = await supabaseClient.from('grad_rsvps').insert([{ 
             full_name: name, 
             phone_number: phone, 
             wants_reminder: reminder,
-            status: status 
+            status: status,
+            guest_count: guests,
+            shirt_request: wantsShirt === 'yes' ? sizes : 'none',
+            zelle_amount: totalCost
         }]);
 
         if (error) {
@@ -98,6 +132,7 @@
         } else {
             document.getElementById('rsvp-view').style.display = 'none';
             document.getElementById('success-view').style.display = 'block';
+            if (totalCost > 0) document.getElementById('payment-area').style.display = 'block';
             if (status === 'Declined') {
                 document.getElementById('success-header').innerText = "Thanks for letting me know! ❤️";
                 document.getElementById('address-info').style.display = 'none';
@@ -105,8 +140,31 @@
         }
     }
 
+    function downloadCalendarInvite() {
+        const event = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'BEGIN:VEVENT',
+            'DTSTART:20260518T140000Z', 
+            'DTEND:20260518T170000Z',   
+            'SUMMARY:Maliyah\'s CAU Graduation',
+            'DESCRIPTION:Class of 2026 Commencement Ceremony',
+            'LOCATION:285 Andrew Young International Blvd NW, Atlanta, GA 30313',
+            'END:VEVENT',
+            'END:VCALENDAR'
+        ].join('\r\n');
+
+        const blob = new Blob([event], { type: 'text/calendar;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.setAttribute('download', 'Maliyah_Graduation.ics');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     function adminLogin() {
-        if (prompt("Admin Password:") === "123456") {
+        if (prompt("Admin Password:") === "CAU2026") {
             document.getElementById('rsvp-view').style.display = 'none';
             document.getElementById('admin-panel').style.display = 'block';
             fetchGuests();
@@ -119,12 +177,13 @@
         if (data && data.length > 0) {
             list.innerHTML = data.map(g => `
                 <div class="rsvp-item">
-                    <strong>${g.full_name}</strong> — ${g.status}<br>
+                    <strong>${g.full_name}</strong> (${g.guest_count} ppl) — ${g.status}<br>
+                    <span style="color: #6d1ed1; font-size: 0.75rem;">Shirt: ${g.shirt_request} | Paid: $${g.zelle_amount}</span><br>
                     <span style="color: #999; font-size: 0.7rem;">${g.phone_number || 'No Phone'} | Reminder: ${g.wants_reminder ? 'Yes' : 'No'}</span>
                 </div>
             `).join('');
         } else {
-            list.innerHTML = "<p style='font-size: 0.8rem; color: #999;'>No RSVPs yet!</p>";
+            list.innerHTML = "<p>No RSVPs yet!</p>";
         }
     }
 </script>
