@@ -10,7 +10,7 @@
         body { margin: 0; padding: 20px; font-family: 'Montserrat', sans-serif; background: url('yearbook.jpg') no-repeat center center fixed; background-size: cover; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
         .card { background: rgba(255, 255, 255, 0.95); max-width: 500px; width: 100%; border-radius: 50px; padding: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.2); text-align: center; }
         h1 { font-family: 'Bodoni Moda', serif; font-style: italic; font-size: 2.8rem; margin-bottom: 10px; color: #1a1a1a; }
-        .photo-container img, .shirt-preview img { width: 100%; max-width: 200px; border-radius: 25px; border: 5px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin: 15px 0; }
+        .photo-container img { width: 100%; max-width: 200px; border-radius: 25px; border: 5px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin: 15px 0; }
         input, select { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #eee; font-family: 'Montserrat'; box-sizing: border-box; font-size: 0.9rem; }
         .reminder-container { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0; cursor: pointer; }
         .reminder-container input[type="checkbox"] { width: 20px; height: 20px; margin: 0; cursor: pointer; }
@@ -39,7 +39,7 @@
         <p style="font-size: 0.75rem; font-weight: 700; margin-top: 10px;">How many people will be attending, including you?</p>
         <input type="number" id="guests" min="1" value="1">
 
-        <p style="font-size: 0.75rem; font-weight: 700; margin-top: 10px;">WANT A GRADUATION SHIRT? ($15 EACH)<br><span style="color: #d32f2f; font-size: 0.65rem;">(Please RSVP before April 15th if ordering a shirt)</span></p>        <div class="shirt-preview"><img src="shirt.jpg" alt="Shirt Design"></div>
+        <p style="font-size: 0.75rem; font-weight: 700; margin-top: 10px;">WANT A GRADUATION SHIRT? ($20 EACH)<br><span style="color: #d32f2f; font-size: 0.65rem;">(RSVP & Payment due before April 24th)</span></p>        
         
         <select id="wantsShirt" onchange="toggleShirtSection()">
             <option value="no">No thank you</option>
@@ -53,7 +53,7 @@
 
         <label class="reminder-container">
             <input type="checkbox" id="reminder"> 
-            <span class="reminder-text">text me a reminder a week before! 📱</span>
+            <span class="reminder-text">Text me a reminder a week before! 📱</span>
         </label>
 
         <button class="btn-main" onclick="handleRSVP('Coming')">I'll be there!</button>
@@ -68,9 +68,9 @@
         <div id="payment-area" style="display:none;">
             <div class="zelle-box">
                 SHIRT ORDER CONFIRMED! 👕<br>
-                Please Zelle your total ($10/shirt) to:<br>
+                Please Zelle or Apple Pay your total to:<br>
                 <span style="font-size: 1.2rem;">619-841-9201</span><br>
-                (Include your name in the memo!)
+                (Due before April 24th. Include name in memo!)
             </div>
         </div>
 
@@ -81,7 +81,7 @@
                 285 Andrew Young International Blvd NW<br>
                 Atlanta, GA 30313, Building A
             </p>
-            <button class="btn-secondary" onclick="downloadCalendarInvite()">🗓 Add to Calendar</button>
+            <button class="btn-secondary" onclick="downloadCalendarInvite()">🗓 Add to Calendar (iPhone/Android)</button>
         </div>
         <button class="btn-main" style="margin-top: 20px;" onclick="location.reload()">Back</button>
     </div>
@@ -114,7 +114,7 @@
         if (!name) return alert("Please enter your name!");
 
         const shirtCount = (wantsShirt === 'yes' && sizes) ? sizes.split(',').length : 0;
-        const totalCost = shirtCount * 10;
+        const totalCost = shirtCount * 20;
 
         const { error } = await supabaseClient.from('grad_rsvps').insert([{ 
             full_name: name, 
@@ -144,11 +144,12 @@
         const event = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
+            'PRODID:-//Maliyah Graduation//NONSGML v1.0//EN',
             'BEGIN:VEVENT',
             'DTSTART:20260518T140000Z', 
             'DTEND:20260518T170000Z',   
             'SUMMARY:Maliyah\'s CAU Graduation',
-            'DESCRIPTION:Class of 2026 Commencement Ceremony',
+            'DESCRIPTION:Class of 2026 Commencement Ceremony. Please arrive early!',
             'LOCATION:285 Andrew Young International Blvd NW, Atlanta, GA 30313',
             'END:VEVENT',
             'END:VCALENDAR'
@@ -178,8 +179,8 @@
             list.innerHTML = data.map(g => `
                 <div class="rsvp-item">
                     <strong>${g.full_name}</strong> (${g.guest_count} ppl) — ${g.status}<br>
-                    <span style="color: #6d1ed1; font-size: 0.75rem;">Shirt: ${g.shirt_request} | Paid: $${g.zelle_amount}</span><br>
-                    <span style="color: #999; font-size: 0.7rem;">${g.phone_number || 'No Phone'} | Reminder: ${g.wants_reminder ? 'Yes' : 'No'}</span>
+                    <span style="color: #6d1ed1; font-size: 0.75rem;">Shirt: ${g.shirt_request} | Total: $${g.zelle_amount}</span><br>
+                    <span style="color: #999; font-size: 0.7rem;">${g.phone_number || 'No Phone'}</span>
                 </div>
             `).join('');
         } else {
